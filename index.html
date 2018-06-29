@@ -17,7 +17,7 @@
           minScore: $("#minscore").val()
         }
         $.ajax({
-          url: "/generate",
+          url: "generate",
           type: "get",
           data: params,
           success: function(response) {
