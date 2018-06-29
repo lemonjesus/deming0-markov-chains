@@ -1,0 +1,82 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <title>Deming 0 Markov Chains</title>
+  <script>
+    $(document).ready(() => {
+      $("#markovform").submit((e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        params = { 
+          user: $("#username").val(),
+          maxLength: $("#maxlength").val(),
+          minWords: $("#minwords").val(),
+          minScore: $("#minscore").val()
+        }
+        $.ajax({
+          url: "/generate",
+          type: "get",
+          data: params,
+          success: function(response) {
+            $("#results ul").empty()
+            if(response.error) {
+              $("#results .blockquote p").text(response.error);
+              $("#results .blockquote .blockquote-footer").html("");
+              $("#results .blockquote").addClass("bg-danger");
+            } else {
+              $("#results .blockquote p").text(response.string);
+              $("#results .blockquote .blockquote-footer").html(`Synthesized from <cite title="Source Title">${params.user?params.user:"The Deming Basement Faggots"}</cite>`);
+              $("#results .blockquote").removeClass("bg-danger");
+              let refhtml = "<li>Based On</li><ul>";
+                response.refs.forEach((ref) => {
+                  refhtml += `<li>${ref.string}</li>`;
+                })
+                refhtml += "</ul>";
+                $("#results ul").append(refhtml);
+              }
+            }
+          });
+        })
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <h1 class="display-3">Deming 0 Markov Chains</h1>
+      <p class="lead">
+        Our Archive Bot archives all messages in public channels. Using Markov chains, you can create sentences from this data
+        based on the probability of one chunk of words to the next. This is basically how Subreddit Simulator works except
+        it has less data to work with so it's not as good.
+      </p>
+      <form id="markovform">
+        <div class="form-group">
+          <label for="username">Username (or blank for everybody)</label>
+          <input type="text" class="form-control" id="username" placeholder="As it appears in Slack">
+        </div>
+        <div class="form-group">
+          <label for="maxlength">Maximum Length</label>
+          <input type="number" class="form-control" id="maxlength">
+        </div>
+        <div class="form-group">
+          <label for="minwords">Minimum Words</label>
+          <input type="number" class="form-control" id="minwords" value=30>
+        </div>
+        <div class="form-group">
+          <label for="minscore">Minimum Score</label>
+          <input type="number" class="form-control" id="minscore" value=20>
+        </div>
+        <button type="submit" class="btn btn-primary">Get A Sentence!</button>
+      </form>
+      <div id="results">
+        <blockquote class="blockquote">
+          <p class="mb-0"></p>
+          <footer class="blockquote-footer"></footer>
+        </blockquote>
+        <ul class="list-unstyled"></ul>
+      </div>
+    </div>
+  </body>
+  </html>

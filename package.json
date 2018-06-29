@@ -1,0 +1,17 @@
+{
+  "name": "slack-markov",
+  "version": "1.0.0",
+  "description": "Make strings of words that 'sound' like your coworkers/friends based on slack history and markov chains!",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.3",
+    "markov-strings": "^1.5.0",
+    "sqlite3": "^4.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tucker Osman",
+  "license": "ISC"
+}
