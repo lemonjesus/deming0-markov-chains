@@ -4,6 +4,12 @@ const express = require('express')
 const app = express()
 const slackdb = new sqlite3.Database("slack.sqlite", sqlite3.OPEN_READONLY);
 
+let usersTable;
+
+slackdb.all('SELECT id, name FROM users', (err, rows) => {
+  usersTable = rows;
+})
+
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/index.html', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/generate', (req, res) => {
@@ -28,6 +34,12 @@ function generateMarkov(messages, options) {
   let result;
   try {
     result = markov.generateSentenceSync();
+    usersTable.forEach((user) => {
+      result.string = result.string.replace(`<@${user.id}>`, `@${user.name}`);
+      result.refs.forEach((ref) => {
+        ref.string = ref.string.replace(`<@${user.id}>`, `@${user.name}`);
+      })
+    });
   } catch(e) {
     result = {error: "There isn't enough data to generate a string with those settings. Try lowering some numbers."}
   }
